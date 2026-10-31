@@ -215,64 +215,19 @@ Os processos escutam localmente em 127.0.0.1, com portas configuráveis. Não ut
 
 6. TECNOLOGIAS UTILIZADAS
 
-- Gateway: JavaScript, Node.js 24.19.0 e Express 5.3.0; sem banco.
-- Usuários: JavaScript, Node.js 24.19.0 e Express 5.3.0; SQLite.
-- Eventos: JavaScript, Node.js 24.19.0 e Express 5.3.0; SQLite.
-- Inscrições: JavaScript, Node.js 24.19.0 e Express 5.3.0; SQLite.
-- Recomendações: JavaScript, Node.js 24.19.0 e Express 5.3.0; sem banco.
-- Interface: HTML, CSS e JavaScript com módulos nativos e fetch.
-- Comunicação: HTTP e JSON.
-- Testes: node:test com processos separados, portas e bancos temporários.
-- Dependências e código: npm, package-lock.json e Git; repositório GitHub indicado na capa.
-
-O SQLite é acessado pelo módulo node:sqlite da versão de Node indicada no README. As versões das dependências estão registradas no package-lock.json. Datas são armazenadas em UTC e exibidas no horário de Brasília.
+Utilizamos Python 3.12, FastAPI e Uvicorn no Gateway e nos quatro microsserviços. Usuários, Eventos e Inscrições possuem bancos SQLite separados, acessados pela biblioteca sqlite3. Gateway e Recomendações não possuem banco. A comunicação interna usa HTTPX; a interface usa HTML, CSS, JavaScript e fetch. As versões instaladas estão em requirements-python-lock.txt.
 
 7. REUSO, ESPECIFICAÇÃO E CÓDIGO DOCUMENTADO
 
-Especificação do código e demonstração
+O Gateway em python/gateway/app.py entrega a interface e encaminha as rotas /api/participantes, /api/eventos, /api/inscricoes e /api/recomendacoes. /api/status consulta o estado dos quatro serviços. Cada processo possui /health.
 
-API Gateway
+Os serviços estão em python/services/usuarios/app.py, eventos/app.py, inscricoes/app.py e recomendacoes/app.py. Usuários cadastra e consulta participantes; Eventos cadastra e consulta eventos e obtém ocupação em Inscrições; Inscrições valida referências, data, duplicidade e capacidade; Recomendações filtra por área, data futura, vagas e ausência de inscrição prévia.
 
-gateway/server.js cria o processo HTTP na porta 3000. Entrega frontend/ por arquivos estáticos e encaminha somente as rotas públicas permitidas para os serviços. Preserva códigos e mensagens das respostas, sem repetir POST. O limite de encaminhamento é 10 segundos; falhas de conexão geram 503 e tempo excedido gera 504. /api/status consulta /health em paralelo e identifica cada serviço como online ou indisponível.
+python/common.py compartilha validações, respostas de erro, conexão SQLite e cliente HTTP. python/shared.py reúne áreas e configuração. python/start.py inicia os cinco processos. Os componentes frontend/components/field.js e event-card.js e o cliente frontend/api.js são reutilizados pelos formulários, programação, inscrições e sugestões.
 
-Microsserviços
+A inscrição verifica referências antes de BEGIN IMMEDIATE, conta inscrições e insere dentro da mesma transação, sem chamada HTTP durante a transação. Erros causam ROLLBACK. A restrição UNIQUE também protege o par participante/evento. A capacidade não muda nesta versão sem edição. As rotas internas de ocupação e IDs evitam chamadas circulares.
 
-| Serviço / arquivo | Entradas e operações | Persistência |
-| --- | --- | --- |
-| Usuários — services/usuarios/server.js | POST /participantes valida nome, e-mail e área; normaliza e-mail. GET /participantes lista; GET /participantes/:id consulta ou retorna 404. | usuarios.sqlite: participantes(id, nome, email UNIQUE, area). |
-| Eventos — services/eventos/server.js | POST /eventos valida dados, início com fuso e capacidade. GET /eventos agrega ocupação para calcular vagas; GET /eventos/:id retorna cadastro básico. | eventos.sqlite: eventos(id, titulo, descricao, inicio, local, area, capacidade). |
-| Inscrições — services/inscricoes/server.js | POST /inscricoes valida referências por HTTP e confirma atomicamente. GET /inscricoes?participanteId lista registros do participante e consulta dados dos eventos. GET /ocupacao e /inscricoes/ids são rotas internas sem encaminhamento no Gateway. | inscricoes.sqlite: inscricoes(id, participanteId, eventoId, criadaEm), UNIQUE(participanteId, eventoId). |
-| Recomendações — services/recomendacoes/server.js | GET /recomendacoes?participanteId consulta interesse, eventos e inscrições, aplica filtros e ordena. | Sem banco; sugestões calculadas a cada consulta. |
-
-Todos usam application e errors de shared/core.js, com JSON de até 32 KB, rota /health e respostas de erro uniformes. Bancos e tabelas são criados automaticamente. SQL usa parâmetros para valores recebidos. Somente o proprietário acessa cada arquivo de banco.
-
-As regras, contratos, códigos HTTP, campos e diagrama estão em Arquitetura (04-arquitetura-e-tecnologias.md). Não existem rotas de edição, exclusão ou cancelamento. A referência a participante não é autenticação: trata-se de uma demonstração local.
-
-Inscrição e recomendação
-
-Na inscrição, as consultas de existência acontecem antes de BEGIN IMMEDIATE. Sem await dentro da transação, a rotina verifica início, duplicidade e contagem, insere e executa COMMIT. Um erro executa ROLLBACK. Essa operação impede ultrapassar a capacidade, e a restrição UNIQUE também protege o par participante/evento. O evento não pode ser editado nesta versão, portanto a capacidade não muda entre validação e confirmação.
-
-A recomendação implementada em services/recomendacoes/server.js usa a regra:
-
-mesma área && início futuro && vagas > 0 && participante ainda não inscrito.
-
-A ordenação é por início e ID. shared/http.js limita consultas internas a três segundos e propaga falhas sem convertê-las em listas vazias. A rota de ocupação não chama Eventos; a consulta básica de evento não chama Inscrições. Assim, a dependência de dados não se transforma em recursão HTTP.
-
-Componentes de software e reuso
-
-| Componente | Contrato / uso |
-| --- | --- |
-| frontend/components/field.js — field(especificacao) | Retorna um campo DOM com label, validação HTML e opções. Reutilizado nos cadastros de participante e evento. |
-| frontend/components/event-card.js — eventCard(evento, opcoes) | Retorna cartão DOM com informações do evento e ação opcional de inscrição. Usado na programação, nas inscrições e nas sugestões. |
-| frontend/api.js — api(caminho, opcoes) | Cliente HTTP único da interface, com JSON, tempo limite e tratamento de erro; acessa somente o Gateway. |
-| shared/core.js | Valida texto, área e ID; abre bancos próprios; configura HTTP, erros e ciclo de vida. Usado pelos processos. |
-| shared/http.js — get(servico, caminho) | Cliente HTTP interno com URLs configuráveis e falhas padronizadas. Usado por Eventos, Inscrições e Recomendações. |
-
-Também há reuso de bibliotecas: Express e SQLite via Node.js. Os serviços reutilizam infraestrutura, mantendo dados e regras de negócio em seus próprios módulos. Conteúdo recebido é apresentado com textContent, sem interpretar texto cadastrado como HTML.
-
-
-
-O código completo acompanha o projeto nas pastas gateway, services, shared, frontend, scripts e tests. Os comentários explicam os pontos de integração e a transação, e a documentação acima relaciona cada arquivo à sua responsabilidade. Os contratos detalhados, incluindo entradas, respostas e erros, estão em docs/04-arquitetura-e-tecnologias.md. O README apresenta exemplos de chamadas e instruções de execução.
+O código completo acompanha o repositório e o anexo da versão HTML deste relatório. Os formatos continuam sendo {dados: ...} e {erro: {codigo, mensagem}}. Dados inválidos retornam 400; inexistentes, 404; duplicidade ou lotação, 409; indisponibilidade, 503; tempo excedido, 504.
 
 8. TELAS E FUNCIONAMENTO PASSO A PASSO
 
@@ -294,22 +249,19 @@ Na verificação pelo navegador, usamos um participante fictício de Computaçã
 
 9. TESTES E EXECUÇÃO
 
-Executamos a suíte npm test com 15 testes reportados: um principal e 14 subtestes, todos aprovados. A suíte verifica cadastros, validações, IDs, duplicidade, consultas por participante, vagas, recomendações, eventos iniciados, persistência após reinício e falhas de dependências.
+A suíte Python passou com dois métodos de teste, sendo o segundo composto por sete cenários. Verificamos cadastros, validações, duplicidade, referências, inscrições, consultas por participante, recomendações, concorrência pela última vaga, persistência após reiniciar os serviços e indisponibilidade de dependências. O registro detalhado está em docs/13-validacao-python.md.
 
-No teste de concorrência, dois participantes solicitaram simultaneamente a última vaga. Apenas uma inscrição recebeu confirmação, e a outra foi recusada por lotação. Nos testes de persistência, encerramos e iniciamos os serviços e conferimos os mesmos registros. Os bancos usados nas verificações são temporários e separados dos dados locais.
+No navegador Python, cadastramos Aluno Teste Python e Simpósio Python. A inscrição reduziu as vagas de duas para uma, apareceu em Minhas inscrições e saiu das recomendações. A captura real está em docs/evidencias/python-interface-integrada.png. As capturas anteriores registram a versão Node.js preservada na tag versao-nodejs-1.0.
 
-Para simular um evento iniciado sem esperar, o teste altera somente o banco temporário de eventos. Não criamos uma rota de edição na aplicação. Ao interromper uma dependência, as operações que precisam dela retornam erro em vez de inventar vagas ou sugestões vazias.
+Para executar:
+1. Instalar Python 3.12 com pip.
+2. Executar py -3.12 -m venv .venv.
+3. Executar .venv\Scripts\python.exe -m pip install -r requirements-python-lock.txt.
+4. Executar .venv\Scripts\python.exe tests\python_migration.py -v.
+5. Executar .venv\Scripts\python.exe -m python.start.
+6. Abrir http://127.0.0.1:3000 e utilizar dados fictícios.
 
-Para executar em outra máquina:
-1. Instalar Node.js 24.19.0 ou superior na linha 24, com npm.
-2. Extrair o projeto e abrir um terminal na pasta que contém package.json.
-3. Executar npm ci para instalar as versões do package-lock.json.
-4. Executar npm test para verificar o funcionamento.
-5. Executar npm start e abrir http://127.0.0.1:3000.
-6. Cadastrar dados fictícios e seguir o roteiro do README.
-7. Encerrar os processos com Ctrl+C. Os dados locais ficam preservados em data/.
-
-Uma instalação nova começa sem cadastros. O pacote não inclui node_modules nem os bancos locais; os bancos são criados automaticamente. É necessário acesso à internet para instalar as dependências na primeira vez, mas não para usar o sistema depois.
+Uma instalação nova começa sem cadastros. Os bancos são criados em data/. As portas e DATA_DIR são configuráveis. A interface não possui autenticação; o participante selecionado identifica apenas o cadastro usado na demonstração local.
 
 10. SITUAÇÃO DA ENTREGA
 
@@ -325,3 +277,5 @@ EXPRESS. Installing. https://expressjs.com/en/starter/installing/. Consulta em 3
 NODE.JS. SQLite, documentação da linha 24. https://nodejs.org/download/release/latest-v24.x/docs/api/sqlite.html. Consulta em 31 out. 2026.
 
 O tema e os integrantes foram registrados em fontes/tema-e-integrantes.md. As regras e os limites específicos são decisões do escopo do nosso projeto.
+
+ATUALIZAÇÃO DA ENTREGA: backend migrado para Python; a versão Node.js permanece na tag versao-nodejs-1.0. O passo 6 atualiza os materiais e publica Python como versão principal. As seções das sprints registram o planejamento e desenvolvimento original.
