@@ -1,4 +1,4 @@
-/** Single reusable HTTP client. All business requests pass through the Gateway. */
+/** Cliente HTTP compartilhado; todas as chamadas de negócio passam pelo Gateway. */
 export async function api(path, { method = 'GET', body } = {}) {
   let response;
   try {

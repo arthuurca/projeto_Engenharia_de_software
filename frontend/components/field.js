@@ -1,4 +1,4 @@
-/** Reusable labeled control; textContent avoids interpreting user values as HTML. */
+/** Campo com rótulo reutilizável; textContent apresenta valores como texto, sem interpretar HTML. */
 export function field({ name, label, type = 'text', options, maxLength, min, step, hint }) {
   const wrapper = document.createElement('div');
   wrapper.className = 'field';

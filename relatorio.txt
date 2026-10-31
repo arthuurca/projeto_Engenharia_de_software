@@ -22,11 +22,11 @@ O participante possui nome, e-mail e uma área de interesse. O evento possui tí
 
 Não foi definida nem registrada uma duração fixa para cada sprint. As três etapas foram delimitadas pelos objetivos e entregas, como uma adaptação acadêmica, e não como ciclos formais de duração fixa do Scrum.
 
-Organizamos o trabalho em três sprints, com um processo ágil simplificado inspirado em Scrum. Usamos o Product Backlog para definir o que construir e os Sprint Backlogs para dividir a execução. O acompanhamento considera os estados A fazer, Em andamento e Concluído. Não adotamos todos os papéis e eventos formais do Scrum; a organização foi adaptada a um trabalho em dupla.
+Organizamos o trabalho em três sprints, com um processo ágil simplificado inspirado em Scrum. Usamos o Product Backlog para definir o que construir e os Sprint Backlogs para dividir a execução. O acompanhamento considera os estados A fazer, Em andamento e Concluído. Não adotamos todos os papéis e eventos formais do Scrum; a organização foi adaptada a um trabalho em dupla. O Scrum Guide (SCHWABER; SUTHERLAND, 2020) é a referência para os conceitos de backlog e incremento; nossa adaptação não corresponde à aplicação integral do Scrum.
 
 Na divisão inicial, Arthur ficou como responsável previsto pelos microsserviços, pelo Gateway e pelas instruções de execução, e Ana pela interface, pelos componentes e pela organização do relatório. Requisitos, arquitetura, integração, testes e revisão foram definidos como atividades compartilhadas. Essa divisão representa o planejamento; os registros técnicos descrevem os resultados observados sem afirmar reuniões ou retrospectivas que não foram registradas.
 
-Na Sprint 1, foram implementados Gateway, Usuários, Eventos e as telas de cadastro e consulta. Na Sprint 2, foram adicionados Inscrições, Recomendações e o cálculo real de vagas. Nesta revisão da Sprint 3, conferimos os testes, a documentação e os materiais de entrega. O endereço do repositório foi incluído na capa para acompanhar a publicação do código.
+Na Sprint 1, foram implementados Gateway, Usuários, Eventos e as telas de cadastro e consulta. Na Sprint 2, foram adicionados Inscrições, Recomendações e o cálculo real de vagas. Nesta revisão da Sprint 3, conferimos os testes, a documentação e os materiais de entrega. 
 
 3. REQUISITOS E PRODUCT BACKLOG
 
@@ -141,7 +141,7 @@ Mantivemos abaixo os objetivos e as tarefas que orientaram as sprints. As entreg
 
 Sprint 1 — Base e cadastros
 
-Objetivo: permitir cadastrar participantes e eventos e consultar os cadastros pela interface. Itens: PB01, PB02 e PB03. A atualização das vagas após inscrições será concluída na Sprint 2.
+Objetivo: permitir cadastrar participantes e eventos e consultar os cadastros pela interface. Itens: PB01, PB02 e PB03. A atualização das vagas após inscrições foi concluída na Sprint 2.
 
 | ID | Tarefa | Responsável previsto |
 | --- | --- | --- |
@@ -198,6 +198,8 @@ Resultados da revisão da Sprint 3:
 - S3-06: relatório e roteiro preparados; link do GitHub incluído; roteiro de demonstração concluído.
 
 5. ARQUITETURA DO SISTEMA
+
+A separação de responsabilidades e a comunicação entre serviços se relacionam à abordagem de Newman (2021). A organização dos requisitos, do projeto e da validação segue os temas de Engenharia de Software apresentados por Sommerville (2019).
 
 Navegador (HTML, CSS e JavaScript)
                   |
@@ -256,7 +258,7 @@ As Figuras 1 a 6 do Anexo A apresentam os serviços e o fluxo de utilização. A
 
 9. TESTES E EXECUÇÃO
 
-A suíte Python passou com dois métodos de teste, sendo o segundo composto por sete cenários. Verificamos cadastros, validações, duplicidade, referências, inscrições, consultas por participante, recomendações, concorrência pela última vaga, persistência após reiniciar os serviços e indisponibilidade de dependências. O registro detalhado está em docs/13-validacao-python.md.
+A suíte Python executa um fluxo completo de integração e sete cenários adicionais, todos aprovados. Verificamos cadastros, validações, duplicidade, referências, inscrições, consultas por participante, recomendações, concorrência pela última vaga, persistência após reiniciar os serviços e indisponibilidade de dependências. O registro detalhado está em docs/13-validacao-python.md.
 
 No navegador Python, cadastramos Aluno Teste Python e Simpósio Python. A inscrição reduziu as vagas de duas para uma, apareceu em Minhas inscrições e saiu das recomendações. O fluxo está ilustrado nas Figuras 1 a 6 do Anexo A.
 
@@ -274,23 +276,22 @@ Uma instalação nova começa sem cadastros. Os bancos são criados em data/. As
 
 O código funcional, as instruções, os backlogs, a arquitetura, a documentação dos componentes e as evidências estão organizados no projeto. O vídeo exigido especificamente para jogos não se aplica ao nosso sistema de eventos.
 
-O repositório de entrega é https://github.com/arthuurca/projeto_Engenharia_de_software, também indicado na capa. O código, os relatórios e as evidências acompanham a entrega. O acesso público ao repositório foi confirmado por consulta sem autenticação à API do GitHub.
+O repositório de entrega é https://github.com/arthuurca/projeto_Engenharia_de_software, também indicado na capa. O código, os relatórios e as evidências acompanham a entrega. O repositório é público.
 
 11. REFERÊNCIAS
 
-Material da disciplina. Orientações do Projeto 2026.2, fornecidas em imagem e guardadas em fontes/orientacoes-projeto-2026-2.png.
-Material da disciplina. Elementos do Relatório do Projeto utilizando Microservices. PDF fornecido para o trabalho, disponível na pasta fontes.
-FASTAPI. Documentação oficial. https://fastapi.tiangolo.com/. Consulta em 31 out. 2026.
-PYTHON. sqlite3, documentação do Python 3.12. https://docs.python.org/3.12/library/sqlite3.html. Consulta em 31 out. 2026.
-HTTPX. Documentação oficial. https://www.python-httpx.org/. Consulta em 31 out. 2026.
+FASTAPI. Documentação oficial. Disponível em: https://fastapi.tiangolo.com/. Acesso em: 31 out. 2026.
 
-O tema e os integrantes foram registrados em fontes/tema-e-integrantes.md. As regras e os limites específicos são decisões do escopo do nosso projeto.
+HTTPX. Documentação oficial. Disponível em: https://www.python-httpx.org/. Acesso em: 31 out. 2026.
 
-REFERÊNCIAS COMPLEMENTARES DE ENGENHARIA DE SOFTWARE
+MATERIAL DA DISCIPLINA. Elementos do Relatório do Projeto utilizando Microservices. Engenharia de Software, 2026.2. PDF fornecido pelo professor.
 
-SOMMERVILLE, Ian. Engenharia de software. 10. ed. São Paulo: Pearson, 2019. Referência complementar para requisitos, projeto e validação.
-NEWMAN, Sam. Building Microservices: Designing Fine-Grained Systems. 2. ed. O’Reilly Media, 2021. Referência complementar sobre separação de serviços e comunicação.
-SCHWABER, Ken; SUTHERLAND, Jeff. The Scrum Guide. Novembro de 2020. Disponível em: https://scrumguides.org/scrum-guide.html. Consulta em 31 out. 2026. A organização adotada aqui é simplificada e não corresponde à aplicação integral do Scrum.
+MATERIAL DA DISCIPLINA. Orientações do Projeto 2026.2. Engenharia de Software, 2026.2. Imagem fornecida para o trabalho.
 
-ATUALIZAÇÃO DA ENTREGA: backend migrado para Python; a versão Node.js permanece na tag versao-nodejs-1.0. O passo 6 atualiza os materiais e publica Python como versão principal. As seções das sprints registram o planejamento e desenvolvimento original.
+NEWMAN, Sam. Building Microservices: Designing Fine-Grained Systems. 2. ed. O'Reilly Media, 2021.
 
+PYTHON. sqlite3: documentação do Python 3.12. Disponível em: https://docs.python.org/3.12/library/sqlite3.html. Acesso em: 31 out. 2026.
+
+SCHWABER, Ken; SUTHERLAND, Jeff. The Scrum Guide. Novembro de 2020. Disponível em: https://scrumguides.org/scrum-guide.html. Acesso em: 31 out. 2026.
+
+SOMMERVILLE, Ian. Engenharia de software. 10. ed. São Paulo: Pearson, 2019.
