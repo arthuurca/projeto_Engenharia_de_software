@@ -5,3 +5,6 @@ data/
 .env
 tmp/
 entrega/
+.venv/
+__pycache__/
+*.pyc
