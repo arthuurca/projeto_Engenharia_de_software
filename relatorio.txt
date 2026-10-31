@@ -217,6 +217,13 @@ Os processos escutam localmente em 127.0.0.1, com portas configuráveis. Não ut
 
 Utilizamos Python 3.12, FastAPI e Uvicorn no Gateway e nos quatro microsserviços. Usuários, Eventos e Inscrições possuem bancos SQLite separados, acessados pela biblioteca sqlite3. Gateway e Recomendações não possuem banco. A comunicação interna usa HTTPX; a interface usa HTML, CSS, JavaScript e fetch. As versões instaladas estão em requirements-python-lock.txt.
 
+| Processo | Linguagem do backend | Framework/servidor | Banco |
+| Gateway | Python 3.12 | FastAPI/Uvicorn | Nenhum |
+| Usuários | Python 3.12 | FastAPI/Uvicorn | SQLite: usuarios.sqlite |
+| Eventos | Python 3.12 | FastAPI/Uvicorn | SQLite: eventos.sqlite |
+| Inscrições | Python 3.12 | FastAPI/Uvicorn | SQLite: inscricoes.sqlite |
+| Recomendações | Python 3.12 | FastAPI/Uvicorn | Nenhum |
+
 7. REUSO, ESPECIFICAÇÃO E CÓDIGO DOCUMENTADO
 
 O Gateway em python/gateway/app.py entrega a interface e encaminha as rotas /api/participantes, /api/eventos, /api/inscricoes e /api/recomendacoes. /api/status consulta o estado dos quatro serviços. Cada processo possui /health.
@@ -231,7 +238,7 @@ O código completo acompanha o repositório e o anexo da versão HTML deste rela
 
 8. TELAS E FUNCIONAMENTO PASSO A PASSO
 
-Tela 1 — Página principal e serviços: a página identifica a aplicação e apresenta o estado real de Usuários, Eventos, Inscrições e Recomendações consultado pelo Gateway. A captura está em docs/evidencias/sprint2-servicos.png.
+Tela 1 — Página principal e serviços: a página identifica a aplicação e apresenta o estado real de Usuários, Eventos, Inscrições e Recomendações consultado pelo Gateway. A captura da versão Python está em docs/evidencias/python-interface-integrada.png, incluindo o painel dos quatro microsserviços online.
 
 Tela 2 — Participante: informamos nome, e-mail e área de interesse. O cadastro salvo aparece na seleção. Ao trocar o participante selecionado, suas inscrições e sugestões são atualizadas. Essa seleção é apenas um recurso da demonstração local, sem login.
 
@@ -243,9 +250,7 @@ Tela 5 — Minhas inscrições: após a confirmação, a inscrição aparece na 
 
 Tela 6 — Recomendações: eventos futuros da mesma área, com vagas e sem inscrição prévia são sugeridos. Depois da inscrição, o evento escolhido sai dessa lista. Sem resultados, a interface informa que não há recomendações.
 
-A captura completa do fluxo está em docs/evidencias/sprint2-interface.png. A cópia visual deste relatório, relatorio.html, incorpora as capturas para consulta sem depender de um site externo.
-
-Na verificação pelo navegador, usamos um participante fictício de Computação e o evento Encontro de Pesquisa em Computação. Após a inscrição, as vagas passaram de 30 para 29, o evento apareceu nas inscrições e deixou de ser recomendado. A Mostra de Projetos de Software continuou sendo sugerida. O registro detalhado está em docs/06-registro-sprint2.md.
+A captura completa da versão Python está em docs/evidencias/python-interface-integrada.png e está incorporada ao relatório HTML. Ela mostra o cadastro, a programação, os quatro serviços online, as inscrições e as recomendações. Na verificação, usamos Aluno Teste Python e Simpósio Python; a inscrição reduziu as vagas de duas para uma e retirou o evento das sugestões. O registro está em docs/12-integracao-interface-python.md.
 
 9. TESTES E EXECUÇÃO
 
@@ -273,8 +278,9 @@ O repositório de entrega é https://github.com/arthuurca/projeto_Engenharia_de_
 
 Material da disciplina. Orientações do Projeto 2026.2, fornecidas em imagem e guardadas em fontes/orientacoes-projeto-2026-2.png.
 Material da disciplina. Elementos do Relatório do Projeto utilizando Microservices. PDF fornecido para o trabalho, disponível na pasta fontes.
-EXPRESS. Installing. https://expressjs.com/en/starter/installing/. Consulta em 31 out. 2026.
-NODE.JS. SQLite, documentação da linha 24. https://nodejs.org/download/release/latest-v24.x/docs/api/sqlite.html. Consulta em 31 out. 2026.
+FASTAPI. Documentação oficial. https://fastapi.tiangolo.com/. Consulta em 31 out. 2026.
+PYTHON. sqlite3, documentação do Python 3.12. https://docs.python.org/3.12/library/sqlite3.html. Consulta em 31 out. 2026.
+HTTPX. Documentação oficial. https://www.python-httpx.org/. Consulta em 31 out. 2026.
 
 O tema e os integrantes foram registrados em fontes/tema-e-integrantes.md. As regras e os limites específicos são decisões do escopo do nosso projeto.
 

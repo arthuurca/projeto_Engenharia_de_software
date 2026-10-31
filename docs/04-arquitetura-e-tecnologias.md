@@ -1,3 +1,9 @@
+# Arquitetura atual da entrega Python
+
+A implementação atual está em `python/`, com Python 3.12, FastAPI/Uvicorn, HTTPX e sqlite3. Gateway e Recomendações não têm banco; Usuários, Eventos e Inscrições mantêm seus bancos separados. O diagrama, as portas e os contratos HTTP abaixo continuam aplicáveis. Os caminhos JavaScript e as tecnologias Node.js abaixo são registros históricos; a especificação atual está em [Código e demonstração](07-codigo-e-demonstracao.md), e a execução está no README.
+
+## Registro da definição original
+
 # 4. Arquitetura e tecnologias
 
 Definimos esta arquitetura para implementar a versão mínima do nosso sistema. Ela descreve decisões de projeto; os serviços ainda não estão implementados.

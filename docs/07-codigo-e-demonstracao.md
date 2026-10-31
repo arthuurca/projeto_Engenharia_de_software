@@ -1,55 +1,30 @@
-# Especificação do código e demonstração
+# Especificação atual — Python
 
-## API Gateway
+7. REUSO, ESPECIFICAÇÃO E CÓDIGO DOCUMENTADO
 
-`gateway/server.js` cria o processo HTTP na porta 3000. Entrega `frontend/` por arquivos estáticos e encaminha somente as rotas públicas permitidas para os serviços. Preserva códigos e mensagens das respostas, sem repetir POST. O limite de encaminhamento é 10 segundos; falhas de conexão geram 503 e tempo excedido gera 504. `/api/status` consulta `/health` em paralelo e identifica cada serviço como online ou indisponível.
+O Gateway em python/gateway/app.py entrega a interface e encaminha as rotas /api/participantes, /api/eventos, /api/inscricoes e /api/recomendacoes. /api/status consulta o estado dos quatro serviços. Cada processo possui /health.
 
-## Microsserviços
+Os serviços estão em python/services/usuarios/app.py, eventos/app.py, inscricoes/app.py e recomendacoes/app.py. Usuários cadastra e consulta participantes; Eventos cadastra e consulta eventos e obtém ocupação em Inscrições; Inscrições valida referências, data, duplicidade e capacidade; Recomendações filtra por área, data futura, vagas e ausência de inscrição prévia.
 
-| Serviço / arquivo | Entradas e operações | Persistência |
-| --- | --- | --- |
-| Usuários — `services/usuarios/server.js` | POST /participantes valida nome, e-mail e área; normaliza e-mail. GET /participantes lista; GET /participantes/:id consulta ou retorna 404. | usuarios.sqlite: participantes(id, nome, email UNIQUE, area). |
-| Eventos — `services/eventos/server.js` | POST /eventos valida dados, início com fuso e capacidade. GET /eventos agrega ocupação para calcular vagas; GET /eventos/:id retorna cadastro básico. | eventos.sqlite: eventos(id, titulo, descricao, inicio, local, area, capacidade). |
-| Inscrições — `services/inscricoes/server.js` | POST /inscricoes valida referências por HTTP e confirma atomicamente. GET /inscricoes?participanteId lista registros do participante e consulta dados dos eventos. GET /ocupacao e /inscricoes/ids são rotas internas sem encaminhamento no Gateway. | inscricoes.sqlite: inscricoes(id, participanteId, eventoId, criadaEm), UNIQUE(participanteId, eventoId). |
-| Recomendações — `services/recomendacoes/server.js` | GET /recomendacoes?participanteId consulta interesse, eventos e inscrições, aplica filtros e ordena. | Sem banco; sugestões calculadas a cada consulta. |
+python/common.py compartilha validações, respostas de erro, conexão SQLite e cliente HTTP. python/shared.py reúne áreas e configuração. python/start.py inicia os cinco processos. Os componentes frontend/components/field.js e event-card.js e o cliente frontend/api.js são reutilizados pelos formulários, programação, inscrições e sugestões.
 
-Todos usam `application` e `errors` de `shared/core.js`, com JSON de até 32 KB, rota `/health` e respostas de erro uniformes. Bancos e tabelas são criados automaticamente. SQL usa parâmetros para valores recebidos. Somente o proprietário acessa cada arquivo de banco.
+A inscrição verifica referências antes de BEGIN IMMEDIATE, conta inscrições e insere dentro da mesma transação, sem chamada HTTP durante a transação. Erros causam ROLLBACK. A restrição UNIQUE também protege o par participante/evento. A capacidade não muda nesta versão sem edição. As rotas internas de ocupação e IDs evitam chamadas circulares.
 
-As regras, contratos, códigos HTTP, campos e diagrama estão em [Arquitetura](04-arquitetura-e-tecnologias.md). Não existem rotas de edição, exclusão ou cancelamento. A referência a participante não é autenticação: trata-se de uma demonstração local.
+O código completo acompanha o repositório e o anexo da versão HTML deste relatório. Os formatos continuam sendo {dados: ...} e {erro: {codigo, mensagem}}. Dados inválidos retornam 400; inexistentes, 404; duplicidade ou lotação, 409; indisponibilidade, 503; tempo excedido, 504.
 
-## Inscrição e recomendação
+8. TELAS E FUNCIONAMENTO PASSO A PASSO
 
-Na inscrição, as consultas de existência acontecem antes de `BEGIN IMMEDIATE`. Sem await dentro da transação, a rotina verifica início, duplicidade e contagem, insere e executa COMMIT. Um erro executa ROLLBACK. Essa operação impede ultrapassar a capacidade, e a restrição UNIQUE também protege o par participante/evento. O evento não pode ser editado nesta versão, portanto a capacidade não muda entre validação e confirmação.
+Tela 1 — Página principal e serviços: a página identifica a aplicação e apresenta o estado real de Usuários, Eventos, Inscrições e Recomendações consultado pelo Gateway. A captura da versão Python está em docs/evidencias/python-interface-integrada.png, incluindo o painel dos quatro microsserviços online.
 
-A recomendação implementada em `services/recomendacoes/server.js` usa a regra:
+Tela 2 — Participante: informamos nome, e-mail e área de interesse. O cadastro salvo aparece na seleção. Ao trocar o participante selecionado, suas inscrições e sugestões são atualizadas. Essa seleção é apenas um recurso da demonstração local, sem login.
 
-`mesma área && início futuro && vagas > 0 && participante ainda não inscrito`.
+Tela 3 — Organizador: informamos título, descrição, data e horário futuros, local, área e capacidade. O servidor repete as validações da interface e recusa dados inválidos.
 
-A ordenação é por início e ID. `shared/http.js` limita consultas internas a três segundos e propaga falhas sem convertê-las em listas vazias. A rota de ocupação não chama Eventos; a consulta básica de evento não chama Inscrições. Assim, a dependência de dados não se transforma em recursão HTTP.
+Tela 4 — Programação: os cartões mostram dados dos eventos e vagas disponíveis. O botão Inscrever-se envia o participante e o evento ao serviço de Inscrições por meio do Gateway. O serviço valida novamente a capacidade antes de confirmar.
 
-## Componentes de software e reuso
+Tela 5 — Minhas inscrições: após a confirmação, a inscrição aparece na consulta do participante selecionado. Uma nova tentativa para o mesmo evento é recusada; o botão também passa a indicar Inscrito.
 
-| Componente | Contrato / uso |
-| --- | --- |
-| `frontend/components/field.js` — field(especificacao) | Retorna um campo DOM com label, validação HTML e opções. Reutilizado nos cadastros de participante e evento. |
-| `frontend/components/event-card.js` — eventCard(evento, opcoes) | Retorna cartão DOM com informações do evento e ação opcional de inscrição. Usado na programação, nas inscrições e nas sugestões. |
-| `frontend/api.js` — api(caminho, opcoes) | Cliente HTTP único da interface, com JSON, tempo limite e tratamento de erro; acessa somente o Gateway. |
-| `shared/core.js` | Valida texto, área e ID; abre bancos próprios; configura HTTP, erros e ciclo de vida. Usado pelos processos. |
-| `shared/http.js` — get(servico, caminho) | Cliente HTTP interno com URLs configuráveis e falhas padronizadas. Usado por Eventos, Inscrições e Recomendações. |
+Tela 6 — Recomendações: eventos futuros da mesma área, com vagas e sem inscrição prévia são sugeridos. Depois da inscrição, o evento escolhido sai dessa lista. Sem resultados, a interface informa que não há recomendações.
 
-Também há reuso de bibliotecas: Express e SQLite via Node.js. Os serviços reutilizam infraestrutura, mantendo dados e regras de negócio em seus próprios módulos. Conteúdo recebido é apresentado com textContent, sem interpretar texto cadastrado como HTML.
+A captura completa da versão Python está em docs/evidencias/python-interface-integrada.png e está incorporada ao relatório HTML. Ela mostra o cadastro, a programação, os quatro serviços online, as inscrições e as recomendações. Na verificação, usamos Aluno Teste Python e Simpósio Python; a inscrição reduziu as vagas de duas para uma e retirou o evento das sugestões. O registro está em docs/12-integracao-interface-python.md.
 
-## Telas e roteiro explicado
-
-1. **Página principal e serviços:** identifica a aplicação e consulta o estado real de Usuários, Eventos, Inscrições e Recomendações. A API Gateway é o ponto de acesso da página.
-2. **Cadastro e seleção do participante:** permite informar nome, e-mail e interesse. O cadastro salvo aparece na seleção. O participante selecionado identifica a pessoa da demonstração; não é um login.
-3. **Cadastro de evento:** o organizador informa título, descrição, início futuro em Brasília, local, área e capacidade. Validações são feitas na interface e repetidas no servidor.
-4. **Programação:** cartões apresentam data, local, área, capacidade e vagas. Selecionar Inscrever-se envia a solicitação ao serviço de Inscrições por meio do Gateway. Sem seleção, em evento iniciado ou lotado, a ação fica desabilitada; o servidor também valida.
-5. **Minhas inscrições:** mostra apenas eventos do participante selecionado. A troca de seleção limpa a visão anterior e carrega os registros correspondentes. Na ausência de registros, informa que não há inscrições.
-6. **Recomendados para você:** reutiliza o cartão e sugere eventos elegíveis. Depois de uma inscrição, as listas são atualizadas e o evento escolhido sai das sugestões.
-
-![Interface e serviços ativos](evidencias/sprint2-servicos.png)
-
-![Fluxo completo com inscrição e recomendação](evidencias/sprint2-interface.png)
-
-As capturas mostram dados fictícios e o funcionamento verificado nas sprints. Para nova demonstração, utilizar datas futuras. A instalação e os comandos estão no README; o roteiro não depende de dados pré-cadastrados.
