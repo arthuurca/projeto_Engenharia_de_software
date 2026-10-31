@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eventos científicos</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="header"><div class="container">
+    <p class="eyebrow">ENGENHARIA DE SOFTWARE · 2026.2</p>
+    <h1>Eventos científicos</h1>
+    <p>Um espaço para conhecer eventos e organizar sua participação.</p>
+    <nav aria-label="Navegação principal">
+      <a href="#eventos">Explorar eventos</a><a href="#participante">Participante</a><a href="#organizador">Organizador</a>
+    </nav>
+  </div></header>
+  <main class="container">
+    <section class="service-panel" aria-labelledby="service-title">
+      <div class="section-heading"><h2 id="service-title">Microsserviços</h2><button type="button" id="refresh-status" class="secondary">Atualizar estado</button></div>
+      <ul id="services" class="services" aria-live="polite"><li>Consultando serviços…</li></ul>
+      <p class="muted">Usuários, eventos, inscrições e recomendações conectados pela API Gateway.</p>
+    </section>
+    <section id="eventos" aria-labelledby="events-title">
+      <div class="section-heading"><div><p class="eyebrow">PROGRAMAÇÃO</p><h2 id="events-title">Explore os eventos</h2></div><button type="button" id="refresh-events" class="secondary">Atualizar eventos</button></div>
+      <p class="muted">Horários de Brasília. Selecione um participante para se inscrever. As vagas são confirmadas no momento da inscrição.</p>
+      <p id="registration-message" class="message" role="status"></p>
+      <p id="events-message" class="message" role="status"></p>
+      <div id="events-list" class="event-grid"></div>
+    </section>
+    <section id="participacao" aria-labelledby="participation-title">
+      <div class="section-heading"><h2 id="participation-title">Sua participação</h2><button type="button" id="refresh-personal" class="secondary">Atualizar minha participação</button></div>
+      <p id="personal-person" class="muted" role="status">Selecione um participante na área abaixo.</p>
+      <h3>Minhas inscrições</h3><p id="registrations-message" class="message" role="status"></p>
+      <div id="registrations-list" class="event-grid"></div>
+      <h3>Recomendados para você</h3><p id="recommendations-message" class="message" role="status"></p>
+      <div id="recommendations-list" class="event-grid"></div>
+    </section>
+    <div class="forms-grid">
+      <section id="participante" class="panel" aria-labelledby="participant-title">
+        <p class="eyebrow">ÁREA DO PARTICIPANTE</p><h2 id="participant-title">Seu cadastro</h2>
+        <p class="muted">Cadastre-se e selecione seu nome para a demonstração.</p>
+        <div class="selection"><label for="participant-select">Participante selecionado</label><select id="participant-select"><option value="">Carregando…</option></select><p id="selected-person" class="muted" role="status"></p><button id="refresh-participants" type="button" class="secondary">Atualizar participantes</button></div>
+        <form id="participant-form"><div id="participant-fields"></div><button type="submit">Cadastrar participante</button><p id="participant-message" class="message" role="status"></p></form>
+      </section>
+      <section id="organizador" class="panel" aria-labelledby="organizer-title">
+        <p class="eyebrow">ÁREA DO ORGANIZADOR</p><h2 id="organizer-title">Novo evento</h2>
+        <p class="muted">Preencha as informações para publicar um evento.</p>
+        <form id="event-form"><div id="event-fields"></div><button type="submit">Cadastrar evento</button><p id="event-message" class="message" role="status"></p></form>
+      </section>
+    </div>
+  </main>
+  <footer class="container">Arthur Carvalho e Ana Leticia Nobre · Projeto acadêmico local, sem autenticação. Utilize dados fictícios.</footer>
+</body>
+</html>
