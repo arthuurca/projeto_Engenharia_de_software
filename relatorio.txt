@@ -16,7 +16,7 @@ Os organizadores precisam divulgar os dados dos eventos e acompanhar suas vagas.
 
 O organizador pode cadastrar eventos e consultar a programação. O participante pode cadastrar seus dados, selecionar seu nome para a demonstração, consultar eventos, inscrever-se e acompanhar suas inscrições e recomendações. Nesta versão acadêmica local, não implementamos autenticação ou controle de permissões. Utilizamos dados fictícios.
 
-O participante possui nome, e-mail e uma área de interesse. O evento possui título, descrição, data e horário de início, local, área e capacidade. Definimos as áreas Computação, Engenharias, Saúde e Ciências Humanas. Não incluímos edição, exclusão, cancelamento de inscrições, pagamentos, certificados, submissão de artigos, envio de e-mails ou aplicativo móvel. As recomendações usam regras simples, sem agentes de IA, que são opcionais no tema.
+O participante possui nome, e-mail e uma área de interesse. O evento possui título, descrição, data e horário de início, local, área e capacidade. Definimos as áreas Computação, Engenharias, Saúde e Ciências Humanas. Não incluímos edição, exclusão, cancelamento de inscrições, pagamentos, certificados, submissão de artigos, envio de e-mails ou aplicativo móvel. As recomendações usam regras simples.
 
 2. METODOLOGIA E ORGANIZAÇÃO DO TRABALHO
 
@@ -115,7 +115,7 @@ PB06 — Recomendação
 - Eventos de outra área, iniciados, lotados ou com inscrição do participante não aparecem nas sugestões.
 - Após uma inscrição, a consulta atualizada de recomendações deixa de sugerir esse evento.
 - Sem eventos elegíveis, a interface informa que não há recomendações disponíveis.
-- As sugestões são calculadas por regras simples, sem IA ou serviço externo.
+- As sugestões são calculadas por regras simples, sem serviço externo.
 
 Requisitos técnicos e de qualidade
 

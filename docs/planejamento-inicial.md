@@ -30,7 +30,7 @@ Para simplificar a demonstração, a interface terá uma área do organizador e 
 3. Inscrever um participante em um evento e listar suas inscrições.
 4. Recomendar eventos da mesma área de interesse do participante.
 
-Não fazem parte do escopo: pagamentos, certificados, submissão de artigos, envio de e-mails, aplicativo móvel e agentes de IA.
+Não fazem parte do escopo: pagamentos, certificados, submissão de artigos, envio de e-mails e aplicativo móvel.
 
 ### Organização técnica proposta
 
@@ -70,7 +70,7 @@ Todos os itens abaixo são necessários para o escopo mínimo. A ordem indica a 
 | PB03 | Como participante, quero consultar eventos para escolher quais frequentar. | Exibe título, data, local, área e vagas disponíveis; informa quando não há eventos. |
 | PB04 | Como participante, quero me inscrever em um evento para reservar minha vaga. | Confirma a inscrição; atualiza vagas; rejeita duplicidade, evento iniciado, lotação e identificadores inexistentes. |
 | PB05 | Como participante, quero consultar minhas inscrições para acompanhar meus eventos. | Exibe apenas inscrições do participante selecionado e os dados dos eventos; informa quando não há inscrições. |
-| PB06 | Como participante, quero receber sugestões conforme meu interesse para encontrar eventos relevantes. | Aplica RN07; informa quando não há sugestões; funciona com regras simples, sem IA. |
+| PB06 | Como participante, quero receber sugestões conforme meu interesse para encontrar eventos relevantes. | Aplica RN07; informa quando não há sugestões; funciona com regras simples. |
 
 ### Requisitos técnicos e de entrega
 

@@ -92,7 +92,7 @@ Todos os seis itens são obrigatórios para a versão mínima definida pela dupl
 - Eventos de outra área, iniciados, lotados ou com inscrição do participante não aparecem nas sugestões.
 - Após uma inscrição, a consulta atualizada de recomendações deixa de sugerir esse evento.
 - Sem eventos elegíveis, a interface informa que não há recomendações disponíveis.
-- As sugestões são calculadas por regras simples, sem IA ou serviço externo.
+- As sugestões são calculadas por regras simples, sem serviço externo.
 
 ## Requisitos técnicos e de qualidade
 

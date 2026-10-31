@@ -5,7 +5,7 @@ Data: 31/10/2026. Registro da implementação e das verificações no projeto, s
 ## Entregas
 
 - Inscrições na porta 3003, com banco próprio, consulta por participante e controle de capacidade.
-- Recomendações na porta 3004, por regras simples, sem banco e sem agentes de IA.
+- Recomendações na porta 3004, por regras simples, sem banco.
 - API Gateway com rotas públicas dos quatro serviços e verificação de estado.
 - Listagem de eventos com vagas reais, obtidas pela ocupação registrada em Inscrições.
 - Interface com inscrição, minhas inscrições e recomendações. Seleção de participante atualiza as listas; respostas antigas são descartadas quando a seleção muda.
@@ -63,6 +63,6 @@ A evidência de serviços é a consulta real de /health de cada processo, aprese
 
 ## Limites e próximos passos
 
-As vagas exibidas são uma consulta momentânea; a confirmação sempre valida novamente a capacidade. A seleção de participante continua sendo um recurso de demonstração, sem autenticação. Não há cancelamento, edição, exclusão ou IA, conforme o escopo.
+As vagas exibidas são uma consulta momentânea; a confirmação sempre valida novamente a capacidade. A seleção de participante continua sendo um recurso de demonstração, sem autenticação. Não há cancelamento, edição ou exclusão, conforme o escopo.
 
 Na Sprint 3, revisar os critérios de aceitação, completar as explicações das telas e do código, organizar a entrega no GitHub e inserir seu link na capa do relatório. Este registro não substitui essa revisão final.

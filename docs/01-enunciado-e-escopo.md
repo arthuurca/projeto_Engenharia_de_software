@@ -11,7 +11,7 @@ O projeto consiste na modelagem e implementação de um sistema web para gerenci
 
 A aplicação será organizada em quatro microsserviços: usuários, eventos, inscrições e recomendações. A interface se comunicará com esses serviços por meio de uma API Gateway. O reuso será demonstrado por componentes compartilhados na interface, como campos de formulário, cartões de eventos e um cliente de comunicação com a API.
 
-A versão desenvolvida terá finalidade acadêmica e priorizará um fluxo completo de uso, com persistência de dados, validações essenciais e instruções para execução local. As recomendações serão baseadas em regras de correspondência entre áreas de interesse, dispensando agentes de inteligência artificial.
+A versão desenvolvida terá finalidade acadêmica e priorizará um fluxo completo de uso, com persistência de dados, validações essenciais e instruções para execução local. As recomendações serão baseadas em regras de correspondência entre áreas de interesse.
 
 ## Problema
 
@@ -76,7 +76,7 @@ Esse roteiro descreve o comportamento esperado e deverá ser executado após a i
 
 ## Limites da versão
 
-O projeto não incluirá edição ou exclusão de cadastros, cancelamento de inscrições, pagamentos, emissão de certificados, submissão de artigos, envio de e-mails, recuperação de senha, aplicativo móvel ou agentes de IA. Cada evento terá apenas uma data e horário de início, sem programação interna de palestras ou sessões.
+O projeto não incluirá edição ou exclusão de cadastros, cancelamento de inscrições, pagamentos, emissão de certificados, submissão de artigos, envio de e-mails, recuperação de senha ou aplicativo móvel. Cada evento terá apenas uma data e horário de início, sem programação interna de palestras ou sessões.
 
 ## Condições para considerar o escopo implementado
 
@@ -94,3 +94,4 @@ O projeto não incluirá edição ou exclusão de cadastros, cancelamento de ins
 - [Tema e integrantes](../fontes/tema-e-integrantes.md).
 
 O escopo acima constitui a definição da versão mínima da dupla; seus detalhes não devem ser atribuídos ao professor como exigências adicionais.
+
