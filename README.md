@@ -6,7 +6,7 @@ Engenharia de Software 2026.2 — Arthur Carvalho e Ana Leticia Nobre.
 
 Implementados: cadastros e seleção de participantes, cadastro e consulta de eventos, inscrições, controle real de vagas, consulta das inscrições e recomendações por área. A interface se comunica pela API Gateway com quatro microsserviços independentes.
 
-A entrega final, publicação no GitHub e revisão geral do relatório fazem parte da Sprint 3.
+Revisão da Sprint 3 concluída, com relatórios, evidências e código publicado no repositório indicado abaixo.
 
 ## Executar
 
@@ -120,10 +120,11 @@ A suíte em tests/sprint1.test.js foi ampliada para as duas sprints. Inicia os c
 - docs/08-checklist-entrega.md: conferência das exigências e pendências.
 - entrega/projeto-eventos-cientificos.zip: pacote local preparado para revisão, sem bancos, caches ou dependências instaladas.
 
-A publicação do código no GitHub e a inclusão do link na capa ainda estão pendentes. Não envie a capa com esse campo sem preencher. Depois de informar o repositório, atualize scripts/build-report.js e execute node scripts/build-report.js para regenerar as duas versões do relatório.
+Código publicado na branch main e endereço incluído na capa. Para regenerar o relatório após alterações na documentação, execute node scripts/build-report.js.
 
 ## Repositório de entrega
 
 https://github.com/arthuurca/projeto_Engenharia_de_software
 
-Atualização: o endereço real foi incluído na capa dos dois relatórios. A indicação anterior de GitHub pendente registra a revisão anterior ao fornecimento do repositório.
+Publicação confirmada no GitHub, com código, testes, documentação e relatórios. O professor deve ter acesso ao repositório para executar as instruções.
+

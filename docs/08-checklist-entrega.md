@@ -2,7 +2,7 @@
 
 ## Resultado da revisão
 
-O sistema e a documentação local estão preparados. **A entrega ainda depende da publicação do código no GitHub e da inclusão do endereço real na capa.** Não há repositório remoto configurado no Git nesta revisão, e não foi inventado um link.
+O sistema e a documentação estão preparados. Código publicado na branch main de https://github.com/arthuurca/projeto_Engenharia_de_software e link real incluído na capa dos dois relatórios.
 
 | Exigência do professor | Evidência no projeto | Situação |
 | --- | --- | --- |
@@ -20,8 +20,8 @@ O sistema e a documentação local estão preparados. **A entrega ainda depende 
 | Telas e explicação em sequência | Seção 8; docs/07; evidências incorporadas em relatorio.html | Pronto |
 | Identificação dos serviços na interface principal | Painel de microsserviços | Pronto |
 | Código funcionando e instruções | npm ci, npm test, npm start; README | Pronto localmente |
-| Código no GitHub | Nenhum remoto configurado | Pendente |
-| Link do GitHub na capa | Campo explicitamente pendente no relatório | Pendente |
+| Código no GitHub | Repositório arthuurca/projeto_Engenharia_de_software, branch main | Pronto |
+| Link do GitHub na capa | Endereço real em relatorio.txt e relatorio.html | Pronto |
 | Referências | Seção 11; pasta fontes | Pronto para os materiais consultados |
 | Vídeo no caso de jogo | Sistema de eventos, sem jogo | Não se aplica |
 
@@ -37,9 +37,9 @@ O pacote da pasta entrega contém fontes, testes, lockfile, documentação e ref
 
 ## Ações finais para enviar
 
-1. Publicar o projeto no repositório GitHub escolhido pela dupla.
-2. Substituir a indicação pendente na capa pelo URL real e verificar se o professor tem acesso.
-3. Gerar novamente o pacote, para incluir o link atualizado nos relatórios.
+1. Publicação concluída no repositório escolhido pela dupla.
+2. Link incluído na capa; conferir o acesso do professor ao repositório.
+3. Pacote regenerado com os relatórios atualizados.
 4. Conferir os dados acadêmicos que a disciplina solicitar e ensaiar o roteiro do README.
 
 Não é necessário adicionar funcionalidades além do escopo para completar essas pendências.
@@ -48,3 +48,4 @@ Não é necessário adicionar funcionalidades além do escopo para completar ess
 
 Repositório de entrega: https://github.com/arthuurca/projeto_Engenharia_de_software
 O endereço foi incluído na capa de relatorio.txt e relatorio.html. A pendência anterior refere-se ao momento em que o repositório ainda não havia sido informado. O código será enviado sem bancos locais, caches ou dependências instaladas.
+

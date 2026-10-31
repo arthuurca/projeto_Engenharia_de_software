@@ -27,3 +27,5 @@ Após publicar no repositório correto, atualizar o endereço nas versões do re
 ## Atualização posterior
 
 O usuário informou https://github.com/arthuurca/projeto_Engenharia_de_software.git. A consulta remota não apresentou branches ou commits, permitindo o envio inicial sem substituir histórico existente. O endereço foi incorporado aos relatórios para a publicação.
+
+Publicação confirmada: envio inicial para origin/main realizado com sucesso. Link na capa e checklist atualizados. As observações de pendência acima são o registro anterior à informação do repositório. A preparação técnica da entrega está concluída; a dupla deve conferir o acesso do professor e apresentar o trabalho.
