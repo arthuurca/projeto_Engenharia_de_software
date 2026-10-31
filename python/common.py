@@ -91,6 +91,12 @@ async def body(request: Request):
     return result if isinstance(result, dict) else {}
 
 async def get(service, path, params=None):
+    """Consulta uma dependência por HTTP com limite de três segundos.
+    
+    Parâmetros: service identifica o serviço; path é a rota; params é a consulta opcional.
+    Retorno: conteúdo do campo dados. Erros de negócio são propagados;
+    conexão ou resposta inválida gera 503 e tempo excedido gera 504.
+    """
     url = service_urls()[service] + path
     if params:
         url += "?" + urlencode(params)

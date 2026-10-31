@@ -20,6 +20,8 @@ O participante possui nome, e-mail e uma área de interesse. O evento possui tí
 
 2. METODOLOGIA E ORGANIZAÇÃO DO TRABALHO
 
+Não foi definida nem registrada uma duração fixa para cada sprint. As três etapas foram delimitadas pelos objetivos e entregas, como uma adaptação acadêmica, e não como ciclos formais de duração fixa do Scrum.
+
 Organizamos o trabalho em três sprints, com um processo ágil simplificado inspirado em Scrum. Usamos o Product Backlog para definir o que construir e os Sprint Backlogs para dividir a execução. O acompanhamento considera os estados A fazer, Em andamento e Concluído. Não adotamos todos os papéis e eventos formais do Scrum; a organização foi adaptada a um trabalho em dupla.
 
 Na divisão inicial, Arthur ficou como responsável previsto pelos microsserviços, pelo Gateway e pelas instruções de execução, e Ana pela interface, pelos componentes e pela organização do relatório. Requisitos, arquitetura, integração, testes e revisão foram definidos como atividades compartilhadas. Essa divisão representa o planejamento; os registros técnicos descrevem os resultados observados sem afirmar reuniões ou retrospectivas que não foram registradas.
@@ -192,8 +194,8 @@ Resultados da revisão da Sprint 3:
 - S3-02: regras principais, persistência e execução independente verificadas.
 - S3-03: responsabilidades, endpoints, componentes e recomendação documentados.
 - S3-04: capturas reais da interface e dos quatro serviços online organizadas.
-- S3-05: instruções e pacote de código preparados; código organizado para publicação no repositório indicado na capa.
-- S3-06: relatório e roteiro preparados; link do GitHub incluído; apresentação a ser realizada pela dupla.
+- S3-05: instruções e pacote de código preparados; código publicado no repositório indicado na capa.
+- S3-06: relatório e roteiro preparados; link do GitHub incluído; roteiro de demonstração concluído.
 
 5. ARQUITETURA DO SISTEMA
 
@@ -238,25 +240,25 @@ O código completo acompanha o repositório e o anexo da versão HTML deste rela
 
 8. TELAS E FUNCIONAMENTO PASSO A PASSO
 
-Tela 1 — Página principal e serviços: a página identifica a aplicação e apresenta o estado real de Usuários, Eventos, Inscrições e Recomendações consultado pelo Gateway. A captura da versão Python está em docs/evidencias/python-interface-integrada.png, incluindo o painel dos quatro microsserviços online.
+Tela 1 — Página principal e serviços: a página identifica a aplicação e apresenta o estado real de Usuários, Eventos, Inscrições e Recomendações consultado pelo Gateway. O painel está na Figura 1 e também está destacado na Figura 7 do Anexo A.
 
-Tela 2 — Participante: informamos nome, e-mail e área de interesse. O cadastro salvo aparece na seleção. Ao trocar o participante selecionado, suas inscrições e sugestões são atualizadas. Essa seleção é apenas um recurso da demonstração local, sem login.
+Tela 2 (Figura 2 do Anexo A) — Participante: informamos nome, e-mail e área de interesse. O cadastro salvo aparece na seleção. Ao trocar o participante selecionado, suas inscrições e sugestões são atualizadas. Essa seleção é apenas um recurso da demonstração local, sem login.
 
-Tela 3 — Organizador: informamos título, descrição, data e horário futuros, local, área e capacidade. O servidor repete as validações da interface e recusa dados inválidos.
+Tela 3 (Figura 3 do Anexo A) — Organizador: informamos título, descrição, data e horário futuros, local, área e capacidade. O servidor repete as validações da interface e recusa dados inválidos.
 
-Tela 4 — Programação: os cartões mostram dados dos eventos e vagas disponíveis. O botão Inscrever-se envia o participante e o evento ao serviço de Inscrições por meio do Gateway. O serviço valida novamente a capacidade antes de confirmar.
+Tela 4 (Figura 4 do Anexo A) — Programação: os cartões mostram dados dos eventos e vagas disponíveis. O botão Inscrever-se envia o participante e o evento ao serviço de Inscrições por meio do Gateway. O serviço valida novamente a capacidade antes de confirmar.
 
-Tela 5 — Minhas inscrições: após a confirmação, a inscrição aparece na consulta do participante selecionado. Uma nova tentativa para o mesmo evento é recusada; o botão também passa a indicar Inscrito.
+Tela 5 (Figura 5 do Anexo A) — Minhas inscrições: após a confirmação, a inscrição aparece na consulta do participante selecionado. Uma nova tentativa para o mesmo evento é recusada; o botão também passa a indicar Inscrito.
 
-Tela 6 — Recomendações: eventos futuros da mesma área, com vagas e sem inscrição prévia são sugeridos. Depois da inscrição, o evento escolhido sai dessa lista. Sem resultados, a interface informa que não há recomendações.
+Tela 6 (Figura 6 do Anexo A) — Recomendações: eventos futuros da mesma área, com vagas e sem inscrição prévia são sugeridos. Depois da inscrição, o evento escolhido sai dessa lista. Sem resultados, a interface informa que não há recomendações.
 
-A captura completa da versão Python está em docs/evidencias/python-interface-integrada.png e está incorporada ao relatório HTML. Ela mostra o cadastro, a programação, os quatro serviços online, as inscrições e as recomendações. Na verificação, usamos Aluno Teste Python e Simpósio Python; a inscrição reduziu as vagas de duas para uma e retirou o evento das sugestões. O registro está em docs/12-integracao-interface-python.md.
+As Figuras 1 a 6 do Anexo A apresentam os serviços e o fluxo de utilização. A Figura 7 mostra a página inteira com o painel de microsserviços destacado. A Figura 6 mostra um evento recomendado antes da inscrição; a ausência de sugestões após a inscrição corresponde ao filtro de eventos já escolhidos.
 
 9. TESTES E EXECUÇÃO
 
 A suíte Python passou com dois métodos de teste, sendo o segundo composto por sete cenários. Verificamos cadastros, validações, duplicidade, referências, inscrições, consultas por participante, recomendações, concorrência pela última vaga, persistência após reiniciar os serviços e indisponibilidade de dependências. O registro detalhado está em docs/13-validacao-python.md.
 
-No navegador Python, cadastramos Aluno Teste Python e Simpósio Python. A inscrição reduziu as vagas de duas para uma, apareceu em Minhas inscrições e saiu das recomendações. A captura real está em docs/evidencias/python-interface-integrada.png. As capturas anteriores registram a versão Node.js preservada na tag versao-nodejs-1.0.
+No navegador Python, cadastramos Aluno Teste Python e Simpósio Python. A inscrição reduziu as vagas de duas para uma, apareceu em Minhas inscrições e saiu das recomendações. O fluxo está ilustrado nas Figuras 1 a 6 do Anexo A.
 
 Para executar:
 1. Instalar Python 3.12 com pip.
@@ -272,7 +274,7 @@ Uma instalação nova começa sem cadastros. Os bancos são criados em data/. As
 
 O código funcional, as instruções, os backlogs, a arquitetura, a documentação dos componentes e as evidências estão organizados no projeto. O vídeo exigido especificamente para jogos não se aplica ao nosso sistema de eventos.
 
-O repositório de entrega é https://github.com/arthuurca/projeto_Engenharia_de_software, também indicado na capa. O código, os relatórios e as evidências acompanham a entrega. Antes de enviar ao professor, vamos conferir o acesso ao repositório e ensaiar o roteiro de apresentação.
+O repositório de entrega é https://github.com/arthuurca/projeto_Engenharia_de_software, também indicado na capa. O código, os relatórios e as evidências acompanham a entrega. O acesso público ao repositório foi confirmado por consulta sem autenticação à API do GitHub.
 
 11. REFERÊNCIAS
 
@@ -284,4 +286,11 @@ HTTPX. Documentação oficial. https://www.python-httpx.org/. Consulta em 31 out
 
 O tema e os integrantes foram registrados em fontes/tema-e-integrantes.md. As regras e os limites específicos são decisões do escopo do nosso projeto.
 
+REFERÊNCIAS COMPLEMENTARES DE ENGENHARIA DE SOFTWARE
+
+SOMMERVILLE, Ian. Engenharia de software. 10. ed. São Paulo: Pearson, 2019. Referência complementar para requisitos, projeto e validação.
+NEWMAN, Sam. Building Microservices: Designing Fine-Grained Systems. 2. ed. O’Reilly Media, 2021. Referência complementar sobre separação de serviços e comunicação.
+SCHWABER, Ken; SUTHERLAND, Jeff. The Scrum Guide. Novembro de 2020. Disponível em: https://scrumguides.org/scrum-guide.html. Consulta em 31 out. 2026. A organização adotada aqui é simplificada e não corresponde à aplicação integral do Scrum.
+
 ATUALIZAÇÃO DA ENTREGA: backend migrado para Python; a versão Node.js permanece na tag versao-nodejs-1.0. O passo 6 atualiza os materiais e publica Python como versão principal. As seções das sprints registram o planejamento e desenvolvimento original.
+

@@ -10,12 +10,22 @@ app = create_app("eventos", connection)
 
 @app.get("/eventos")
 async def list_events():
+    """Lista eventos e calcula vagas pela ocupação de Inscrições.
+    
+    Parâmetros: nenhum. Retorno: lista em dados com vagasDisponiveis.
+    Erros: 503/504 quando não é possível consultar a ocupação; não inventa vagas.
+    """
     rows = [dict(row) for row in connection.execute("SELECT * FROM eventos ORDER BY inicio,id")]
     occupancy = {row["eventoId"]: row["total"] for row in await get("inscricoes", "/ocupacao")}
     return {"dados": [{**row, "vagasDisponiveis": row["capacidade"] - occupancy.get(row["id"], 0)} for row in rows]}
 
 @app.get("/eventos/{event_id}")
 def event(event_id: str):
+    """Consulta event_id sem consultar a ocupação.
+    
+    Retorno: dados básicos do evento. Erros: 400 para ID inválido e 404 se inexistente.
+    A consulta básica permite validar inscrições sem uma chamada circular.
+    """
     row = connection.execute("SELECT * FROM eventos WHERE id=?", (ident(event_id),)).fetchone()
     if row is None:
         error(404, "EVENTO_INEXISTENTE", "Evento não encontrado.")
@@ -23,6 +33,11 @@ def event(event_id: str):
 
 @app.post("/eventos")
 async def add_event(request: Request):
+    """Cadastra um evento a partir do JSON de request.
+    
+    Retorno: evento persistido em dados, HTTP 201; início normalizado em UTC.
+    Erros: 400 para campos, área, calendário, fuso, início ou capacidade inválidos.
+    """
     data = await body(request)
     title = required(data.get("titulo"), "Título", 160)
     description = required(data.get("descricao"), "Descrição", 2000)

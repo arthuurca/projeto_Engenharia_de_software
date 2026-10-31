@@ -13,6 +13,11 @@ SERVICES = ("usuarios", "eventos", "inscricoes", "recomendacoes")
 
 @app.get("/api/status")
 async def status():
+    """Consulta /health dos quatro serviços em paralelo.
+    
+    Parâmetros: nenhum. Retorno: lista em dados com nome e estado.
+    Falhas individuais são representadas por indisponivel, sem ocultar os demais.
+    """
     async def probe(name):
         try:
             async with httpx.AsyncClient(timeout=3) as client:
@@ -24,6 +29,15 @@ async def status():
 
 @app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy(path: str, request: Request):
+    """Encaminha uma rota pública permitida ao serviço responsável.
+    
+    Parâmetros: path é o caminho após /api; request contém método, consulta e corpo.
+    Retorno: resposta JSON e código HTTP recebidos do serviço.
+    Erros: 404 para rota não permitida; 405 para método inválido;
+    503 para conexão indisponível e 504 para tempo excedido.
+    """
+    # Aceita participantes/eventos com ID opcional e apenas as raízes de inscrições/recomendações.
+    # Caminhos internos, como /ocupacao, não são expostos.
     match = re.fullmatch(r"(participantes|eventos)(?:/[^/]+)?|(inscricoes|recomendacoes)", path)
     if match is None:
         error(404, "ROTA_INEXISTENTE", "Rota não encontrada.")

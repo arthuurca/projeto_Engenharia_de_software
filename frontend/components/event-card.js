@@ -1,6 +1,6 @@
 const dateFormat = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'medium', timeStyle: 'short' });
 
-/** Shared event presentation, ready for the recommendation list in Sprint 2. */
+/** Cartão reutilizado na programação, nas inscrições e nas recomendações. */
 export function eventCard(event, { onRegister, registered = false, participantSelected = false, busy = false } = {}) {
   const card = document.createElement('article');
   card.className = 'card';

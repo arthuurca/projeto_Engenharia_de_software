@@ -1,4 +1,4 @@
-"""Inicializa os cinco processos Python quando as aplicações forem migradas."""
+"""Inicializa e acompanha os cinco processos Python."""
 
 import importlib.util
 import os

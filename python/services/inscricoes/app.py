@@ -12,15 +12,30 @@ app = create_app("inscricoes", connection)
 
 @app.get("/ocupacao")
 def occupancy():
+    """Conta inscrições agrupadas por evento no banco proprietário.
+    
+    Parâmetros: nenhum. Retorno: lista de eventoId e total, sem chamadas HTTP.
+    """
     return {"dados": [dict(row) for row in connection.execute("SELECT eventoId, COUNT(*) AS total FROM inscricoes GROUP BY eventoId")]}
 
 @app.get("/inscricoes/ids")
 def registration_ids(participanteId: str | None = None):
+    """Obtém IDs dos eventos inscritos para participanteId.
+    
+    Retorno: lista em dados; erro 400 para identificador inválido.
+    Rota interna: não é encaminhada pelo Gateway.
+    """
     pid = ident(participanteId)
     return {"dados": [row["eventoId"] for row in connection.execute("SELECT eventoId FROM inscricoes WHERE participanteId=?", (pid,))]}
 
 @app.get("/inscricoes")
 async def registrations(participanteId: str | None = None):
+    """Consulta inscrições do participanteId informado na URL.
+    
+    Retorno: registros do participante com os dados de cada evento.
+    Erros: 400 para ID inválido, 404 para participante inexistente e
+    503/504 se os serviços necessários não responderem.
+    """
     pid = ident(participanteId)
     await get("usuarios", f"/participantes/{pid}")
     rows = [dict(row) for row in connection.execute("SELECT * FROM inscricoes WHERE participanteId=? ORDER BY id", (pid,))]
@@ -29,6 +44,15 @@ async def registrations(participanteId: str | None = None):
 
 @app.post("/inscricoes")
 async def register(request: Request):
+    """Confirma uma inscrição sem ultrapassar a capacidade do evento.
+    
+    Parâmetro: request, JSON com participanteId e eventoId.
+    Retorno: inscrição criada em dados, HTTP 201.
+    Erros: 400 para IDs inválidos; 404 para referências inexistentes;
+    409 para duplicidade, início ou lotação; 503/504 para dependências.
+    BEGIN IMMEDIATE reserva a escrita antes de contar e inserir.
+    COMMIT confirma; qualquer exceção executa ROLLBACK.
+    """
     data = await body(request)
     pid, eid = ident(data.get("participanteId")), ident(data.get("eventoId"))
     _, event = await asyncio.gather(get("usuarios", f"/participantes/{pid}"), get("eventos", f"/eventos/{eid}"))

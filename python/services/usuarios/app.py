@@ -11,10 +11,18 @@ app = create_app("usuarios", connection)
 
 @app.get("/participantes")
 def list_participants():
+    """Lista participantes em ordem de identificador.
+    
+    Parâmetros: nenhum. Retorno: lista de cadastros em dados, vazia quando não há registros.
+    """
     return {"dados": [dict(row) for row in connection.execute("SELECT * FROM participantes ORDER BY id")]}
 
 @app.get("/participantes/{participant_id}")
 def participant(participant_id: str):
+    """Consulta participant_id, um identificador positivo.
+    
+    Retorno: cadastro em dados. Erros: 400 para ID inválido e 404 se não existir.
+    """
     row = connection.execute("SELECT * FROM participantes WHERE id=?", (ident(participant_id),)).fetchone()
     if row is None:
         error(404, "PARTICIPANTE_INEXISTENTE", "Participante não encontrado.")
@@ -22,6 +30,12 @@ def participant(participant_id: str):
 
 @app.post("/participantes")
 async def add_participant(request: Request):
+    """Cadastra nome, e-mail e área recebidos no JSON de request.
+    
+    Retorno: participante persistido em dados, HTTP 201.
+    Erros: 400 para campos inválidos; 409 para e-mail já cadastrado.
+    O e-mail é normalizado antes da restrição UNIQUE no banco.
+    """
     data = await body(request)
     name = required(data.get("nome"), "Nome", 120)
     email = required(data.get("email"), "E-mail", 254).lower()
