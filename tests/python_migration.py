@@ -2,6 +2,7 @@
 import json
 import os
 import socket
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -93,9 +94,78 @@ class MigrationTest(unittest.TestCase):
             responses = list(pool.map(lambda pid: self.call("/inscricoes", {"participanteId": pid, "eventoId": e1["id"]})[0], (p1["id"], p2["id"])))
         self.assertEqual(sorted(responses), [201, 409])
         self.assertEqual(self.call("/eventos")[1]["dados"][0]["vagasDisponiveis"], 0)
-        self.assertEqual(self.call("/inscricoes", {"participanteId": p1["id"], "eventoId": e1["id"]})[0], 409 if responses[0] == 201 else 409)
+        self.assertEqual(self.call("/inscricoes", {"participanteId": p1["id"], "eventoId": e1["id"]})[0], 409)
         self.assertEqual(self.call(f"/recomendacoes?participanteId={p1['id']}")[1]["dados"], [])
         self.assertEqual(self.call("/eventos", {**event, "inicio": "2020-01-01T10:00:00Z"})[0], 400)
+
+    def test_extended_acceptance(self):
+        person = {"nome": "Pessoa C", "email": "c@example.com", "area": "Computação"}
+        event = {"titulo": "Pesquisa", "descricao": "Trabalhos", "inicio": (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(timespec="milliseconds"), "local": "Sala", "area": "Computação", "capacidade": 10}
+        with self.subTest("validações dos cadastros"):
+            for change in ({"nome": " "}, {"email": "erro"}, {"area": "Outra"}):
+                self.assertEqual(self.call("/participantes", {**person, **change})[0], 400)
+            for change in ({"capacidade": 0}, {"capacidade": -1}, {"capacidade": 1.5}, {"capacidade": True}, {"titulo": " "}, {"inicio": "2099-02-30T10:00:00Z"}, {"inicio": "2099-01-01T10:00:00"}):
+                self.assertEqual(self.call("/eventos", {**event, **change})[0], 400)
+        pid = self.call("/participantes", person)[1]["dados"]["id"]
+        eid = self.call("/eventos", event)[1]["dados"]["id"]
+        other = self.call("/eventos", {**event, "area": "Saúde"})[1]["dados"]["id"]
+        with self.subTest("inscrição e isolamento por participante"):
+            self.assertEqual(self.call("/inscricoes", {"participanteId": pid, "eventoId": eid})[0], 201)
+            duplicate = self.call("/inscricoes", {"participanteId": pid, "eventoId": eid})
+            self.assertEqual(duplicate[1]["erro"]["codigo"], "INSCRICAO_DUPLICADA")
+            rows = self.call(f"/inscricoes?participanteId={pid}")[1]["dados"]
+            self.assertEqual([row["eventoId"] for row in rows], [eid])
+            self.assertEqual(rows[0]["evento"]["titulo"], event["titulo"])
+            self.assertEqual(self.call("/inscricoes", {"participanteId": 999999, "eventoId": eid})[0], 404)
+            self.assertEqual(self.call("/inscricoes", {"participanteId": pid, "eventoId": 999999})[0], 404)
+        with self.subTest("recomendações excluem outra área e inscrição prévia"):
+            ids = [row["id"] for row in self.call(f"/recomendacoes?participanteId={pid}")[1]["dados"]]
+            self.assertNotIn(eid, ids)
+            self.assertNotIn(other, ids)
+        with self.subTest("evento iniciado"):
+            # Somente o banco temporário é alterado para simular a passagem do tempo.
+            with sqlite3.connect(Path(self.storage.name) / "eventos.sqlite") as fixture:
+                fixture.execute("UPDATE eventos SET inicio=? WHERE id=?", ("2020-01-01T00:00:00.000Z", other))
+            result = self.call("/inscricoes", {"participanteId": pid, "eventoId": other})
+            self.assertEqual(result[1]["erro"]["codigo"], "EVENTO_INICIADO")
+        with self.subTest("parâmetros, inexistência e rotas internas"):
+            for path in ("/inscricoes", "/recomendacoes", "/eventos/0", "/participantes/abc"):
+                self.assertEqual(self.call(path)[0], 400)
+            for path in ("/ocupacao", "/inscricoes/ids", "/eventos/999999", "/recomendacoes?participanteId=999999"):
+                self.assertEqual(self.call(path)[0], 404)
+        with self.subTest("persistência após reiniciar os serviços"):
+            for index in (0, 1, 2):
+                self.restart(index)
+            self.assertEqual(self.call(f"/participantes/{pid}")[1]["dados"]["email"], person["email"])
+            self.assertEqual(self.call(f"/inscricoes?participanteId={pid}")[1]["dados"][0]["eventoId"], eid)
+            self.assertEqual(next(row for row in self.call("/eventos")[1]["dados"] if row["id"] == eid)["vagasDisponiveis"], 9)
+        with self.subTest("dependência indisponível não inventa vagas"):
+            child = self.processes[2]
+            child.terminate()
+            child.wait(timeout=5)
+            try:
+                self.assertEqual(self.call("/eventos")[0], 503)
+                self.assertEqual(self.call(f"/recomendacoes?participanteId={pid}")[0], 503)
+                self.assertEqual(self.call(f"/eventos/{eid}")[0], 200)
+                self.assertEqual(self.call("/status")[1]["dados"][2]["estado"], "indisponivel")
+            finally:
+                self.restart(2)
+
+    def restart(self, index):
+        child = self.processes[index]
+        if child.poll() is None:
+            child.terminate()
+            child.wait(timeout=5)
+        self.processes[index] = subprocess.Popen(child.args, cwd=ROOT, env=self.env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        service = ("USUARIOS", "EVENTOS", "INSCRICOES", "RECOMENDACOES", "GATEWAY")[index]
+        for _ in range(100):
+            try:
+                with urllib.request.urlopen(f"http://127.0.0.1:{self.ports[service]}/health", timeout=1) as response:
+                    if response.status == 200:
+                        return
+            except urllib.error.URLError:
+                time.sleep(0.1)
+        self.fail(f"Serviço {service} não reiniciou")
 
 if __name__ == "__main__":
     unittest.main()
