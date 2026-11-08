@@ -30,14 +30,10 @@ Variáveis opcionais: GATEWAY_PORT, USUARIOS_PORT, EVENTOS_PORT, INSCRICOES_PORT
 
 A interface acessa somente o Gateway. As rotas são /api/participantes, /api/eventos, /api/inscricoes e /api/recomendacoes. As consultas pessoais recebem participanteId. O painel /api/status consulta a saúde real dos serviços. Cada processo oferece /health. Respostas usam dados ou erro; a inscrição é confirmada em transação SQLite, com proteção contra duplicidade e excesso de capacidade.
 
-## Relatórios e validação
+## Relatório e testes
 
-- relatorio.txt: relatório consolidado com link do GitHub na capa.
-- relatorio.html: versão visual com captura real Python e código em anexo.
-- docs/13-validacao-python.md: cobertura e resultado dos testes.
-- docs/12-integracao-interface-python.md: verificação pelo navegador.
-- python/build_report.py: gerador da versão visual; execute python -m python.build_report.
+O [relatório final em PDF](output/pdf/relatorio-projeto-eventos-cientificos.pdf) acompanha o projeto.
 
-A suíte usa cinco processos com portas e bancos temporários, validando cadastros, vagas, recomendações, concorrência, persistência e falhas de dependências. Os registros históricos das sprints descrevem o desenvolvimento original; a implementação atual está em python/. A versão Node.js está preservada na tag versao-nodejs-1.0.
+A suíte em tests/python_migration.py inicia cinco processos com portas e bancos temporários e verifica cadastros, vagas, recomendações, concorrência, persistência e falhas de dependências.
 
 Repositório: https://github.com/arthuurca/projeto_Engenharia_de_software

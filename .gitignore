@@ -8,3 +8,12 @@ entrega/
 .venv/
 __pycache__/
 *.pyc
+
+# Materiais locais de elaboração do relatório
+docs/
+fontes/
+relatorio.txt
+relatorio.html
+relatorio-html.txt
+python/build_pdf.py
+python/build_report.py
